@@ -80,9 +80,9 @@ def ask_question(vector_store, llm, question: str) -> dict:
             "answer"  -> str: the generated answer
             "sources" -> list[str]: the chunk texts that were retrieved
     """
-    # TODO: implement this (~6-8 lines)
-    raise NotImplementedError("TODO 1: Implement ask_question")
-
+    docs = vector_store.similarity_search(question, k=3)
+    sources = [doc.page_content for doc in docs]
+    context = "\n\n".join(sources)
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # TODO 2: Complete the interactive loop
