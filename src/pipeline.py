@@ -13,6 +13,7 @@ Useful docs:
 """
 
 import os
+from src.cli_utils import parse_args, validate_data_dir
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from src.knowledge_base import build_knowledge_base
 
@@ -84,6 +85,13 @@ def ask_question(vector_store, llm, question: str) -> dict:
     sources = [doc.page_content for doc in docs]
     context = "\n\n".join(sources)
 
+    prompt = PROMPT_TEMPLATE.format(context=context, question=question)
+    result = llm(prompt)
+    answer = result[0]["generated_text"]
+
+    return {"answer": answer, "sources": sources}
+
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # TODO 2: Complete the interactive loop
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -101,9 +109,35 @@ def main():
          - Prints the retrieved sources and the answer
     """
     data_dir = os.path.join(os.path.dirname(__file__), "..", "data")
+    if not validate_data_dir(data_dir):
+        return
 
-    # TODO: implement this (~10-12 lines)
-    raise NotImplementedError("TODO 2: Complete the interactive loop")
+    args = parse_args()
+
+    vector_store = build_knowledge_base(data_dir)
+    llm = get_llm()
+
+    def print_result(question: str):
+        result = ask_question(vector_store, llm, question)
+        print("\nSources:")
+        for i, source in enumerate(result["sources"], 1):
+            print(f"  {i}. {source[:150]}...")
+        print(f"\nAnswer: {result['answer']}\n")
+
+    if args.query:
+        print_result(args.query)
+        return
+
+    print("Ask a question about our services, pricing, or process (type 'quit' to exit).\n")
+
+    while True:
+        question = input("> ").strip()
+        if question.lower() == "quit":
+            break
+        if not question:
+            continue
+
+        print_result(question)
 
 
 if __name__ == "__main__":
