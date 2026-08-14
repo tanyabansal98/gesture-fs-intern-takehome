@@ -16,12 +16,13 @@ import os
 from src.cli_utils import parse_args, validate_data_dir
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from src.knowledge_base import build_knowledge_base
+from typing import Callable
 
 
 # ──────────────────────────────────────────────
 # Provided: local LLM (no API key needed)
 # ──────────────────────────────────────────────
-def get_llm():
+def get_llm() -> Callable[[str], list[dict]]:
     """Return a callable local LLM using flan-t5-base.
 
     Downloads ~1GB on first run, then cached.
@@ -59,7 +60,7 @@ Answer:"""
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # TODO 1: Implement ask_question
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def ask_question(vector_store, llm, question: str) -> dict:
+def ask_question(vector_store, llm: Callable[[str], list[dict]], question: str) -> dict[str, object]:
     """Retrieve relevant chunks and generate an answer.
 
     Steps:
@@ -95,7 +96,7 @@ def ask_question(vector_store, llm, question: str) -> dict:
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # TODO 2: Complete the interactive loop
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-def main():
+def main() -> None:
     """Interactive Q&A loop.
 
     Steps:

@@ -95,3 +95,21 @@ class TestAnswerGeneration:
         assert "2,500" in answer or "2500" in answer or "starter" in answer, (
             "Answer should address the pricing question"
         )
+
+
+# ────────────────────────────────
+# Edge Cases
+# ────────────────────────────────
+class TestEdgeCases:
+    def test_sources_are_non_empty_strings(self, vector_store, llm):
+        result = ask_question(vector_store, llm, "What is your pricing?")
+        for source in result["sources"]:
+            assert isinstance(source, str), "Each source should be a string"
+            assert len(source.strip()) > 0, "Each source should be non-empty"
+
+    def test_out_of_scope_question_still_returns_valid_structure(self, vector_store, llm):
+        result = ask_question(vector_store, llm, "What is the capital of France?")
+        assert isinstance(result, dict)
+        assert "answer" in result
+        assert "sources" in result
+        assert isinstance(result["sources"], list)

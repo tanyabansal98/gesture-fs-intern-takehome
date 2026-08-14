@@ -6,7 +6,7 @@ import argparse
 import os
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments for the pipeline CLI."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--query", type=str, help="Ask a single question and exit")
