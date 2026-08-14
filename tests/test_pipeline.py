@@ -102,12 +102,16 @@ class TestAnswerGeneration:
 # ────────────────────────────────
 class TestEdgeCases:
     def test_sources_are_non_empty_strings(self, vector_store, llm):
+        """Ensure retrieved source snippets are valid non-empty text strings."""
+        # This is a test to check if the retrieved documents aren't returning blank or irrelevant strings
         result = ask_question(vector_store, llm, "What is your pricing?")
         for source in result["sources"]:
             assert isinstance(source, str), "Each source should be a string"
             assert len(source.strip()) > 0, "Each source should be non-empty"
 
     def test_out_of_scope_question_still_returns_valid_structure(self, vector_store, llm):
+        """Verify pipeline degrades gracefully with off-topic queries without breaking the response schema."""
+        # Even if the question is out of context, the response structure should remain consistent
         result = ask_question(vector_store, llm, "What is the capital of France?")
         assert isinstance(result, dict)
         assert "answer" in result

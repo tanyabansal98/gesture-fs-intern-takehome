@@ -136,6 +136,7 @@ def main() -> None:
         if question.lower() == "quit":
             break
         if not question:
+            print("Please enter a question before proceeding.\n")
             continue
 
         print_result(question)
